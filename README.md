@@ -1,6 +1,6 @@
 # my_whatsaap
 
-A new Flutter project.
+A new Flutter project. Clone Whatsaap que recria algumas funcionalidade do app real. usando Firebasepara autenticar
 
 ## Getting Started
 
