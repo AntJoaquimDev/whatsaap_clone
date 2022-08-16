@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_final_fields
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -12,10 +14,13 @@ class FormCadastro extends StatefulWidget {
 }
 
 class _FormCadastroState extends State<FormCadastro> {
+  FirebaseAuth auth = FirebaseAuth.instance;
+
   TextEditingController _controllerNome = TextEditingController();
   TextEditingController _controllerEmail = TextEditingController();
   TextEditingController _controllerSenha = TextEditingController();
   String _mensageErro = '';
+
   _validarCampos() {
     String nome = _controllerNome.text;
     String email = _controllerEmail.text;
@@ -23,7 +28,6 @@ class _FormCadastroState extends State<FormCadastro> {
     Usuario usuario = Usuario();
 
     if (nome.isNotEmpty && nome.length >= 3) {
-      //email.isNotEmpty
       if (email.isNotEmpty && email.contains('@')) {
         if (senha.isNotEmpty && senha.length >= 6) {
           setState(() {
@@ -54,17 +58,19 @@ class _FormCadastroState extends State<FormCadastro> {
   }
 
   Future<void> _cadastrarUser(Usuario usuario) async {
-    FirebaseAuth auth = FirebaseAuth.instance;
     auth
         .createUserWithEmailAndPassword(
       email: usuario.email,
       password: usuario.senha,
     )
         .then((auth) {
-      setState(() {
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => MyHome()));
-      });
+      final db = FirebaseFirestore.instance;
+
+      db.collection('usuarios').doc(auth.user!.uid).set(
+            usuario.toMap(),
+          );
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => MyHome()));
     }).catchError((error) {
       setState(() {
         _mensageErro =
@@ -87,7 +93,6 @@ class _FormCadastroState extends State<FormCadastro> {
         child: Center(
           child: SingleChildScrollView(
             child: Container(
-              //width: 390,
               width: deviceSize.width * 0.35,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -104,7 +109,7 @@ class _FormCadastroState extends State<FormCadastro> {
                     padding: EdgeInsets.only(bottom: 8),
                     child: TextField(
                       controller: _controllerNome,
-                      autofocus: true,
+                      autofocus: false,
                       keyboardType: TextInputType.name,
                       style: TextStyle(fontSize: 20),
                       decoration: InputDecoration(

@@ -1,7 +1,10 @@
+import 'dart:io';
+
 class Usuario {
   late String _nome;
   late String _email;
   late String _senha;
+  File? _storedImage;
 
   Usuario();
 
@@ -21,5 +24,19 @@ class Usuario {
 
   set nome(String value) {
     _nome = value;
+  }
+
+  File get storedImage => _storedImage!;
+  set storedImage(File image) {
+    _storedImage = image;
+  }
+
+  Map<String, dynamic> toMap() {
+    Map<String, dynamic> map = {
+      'nome': this.nome,
+      'email': this.email,
+      'storedImage': this.storedImage,
+    };
+    return map;
   }
 }

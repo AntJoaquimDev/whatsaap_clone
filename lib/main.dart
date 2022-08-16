@@ -14,20 +14,28 @@ import 'package:my_whatsaap/services/form_cadastro.dart';
 import 'pages/myhome_page.dart';
 import 'services/login.dart';
 
-Future<void> main() async {
+import 'package:flutter/material.dart';
+
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
 
-  runApp(MaterialApp(
-    theme: ThemeData(
-        //0xff25D366
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: ThemeData(
         primaryColor: Color(0xff075E54),
-        accentColor: Color(0xff25D366)),
-    debugShowCheckedModeBanner: false,
-    home: Login(),
-    // initialRoute: "/",
-    // routes: {
-    //   "/FormCadastro": (context) => const FormCadastro(),
-    // },
-  ));
+        secondaryHeaderColor: Color(0xff25D366),
+        scaffoldBackgroundColor: Color(0xff075E54),
+      ),
+      home: Login(),
+      debugShowCheckedModeBanner: false,
+    );
+  }
 }

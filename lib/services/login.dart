@@ -16,8 +16,10 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> {
   FirebaseAuth auth = FirebaseAuth.instance;
-  TextEditingController _controllerEmail = TextEditingController();
-  TextEditingController _controllerSenha = TextEditingController();
+  TextEditingController _controllerEmail =
+      TextEditingController(text: 'abc@gmail.com');
+  TextEditingController _controllerSenha =
+      TextEditingController(text: '123456');
   String _mensageErro = '';
 
   _validarCampos() {
@@ -36,8 +38,7 @@ class _LoginState extends State<Login> {
         _logarUser(usuario);
       } else {
         setState(() {
-          _mensageErro =
-              'Senha não pode  ser vazio e Ter mais que 5 caracteres. ';
+          _mensageErro = 'Esqueceu a senha? Se não faça o seu cadastro.  ';
         });
       }
     } else {
@@ -55,21 +56,21 @@ class _LoginState extends State<Login> {
     )
         .then((auth) {
       setState(() {
-        Navigator.push(
+        Navigator.pushReplacement(
             context, MaterialPageRoute(builder: (context) => MyHome()));
       });
     }).catchError((error) {
       setState(() {
         _mensageErro =
-            'Erro ao cadastrar usuário,verifique os campos e tente novament';
+            'Erro ao tentar logar usuário, verifique os campos e tente novamente';
       });
     });
   }
 
-  Future<void> _veriivarUserLogad() async {
+  Future<void> _verivarUserLogad() async {
     User? user = await auth.currentUser;
     if (user != null) {
-      Navigator.push(
+      Navigator.pushReplacement(
         context,
         MaterialPageRoute(
           builder: (_) => MyHome(),
@@ -81,7 +82,7 @@ class _LoginState extends State<Login> {
   @override
   void initState() {
     super.initState();
-    _veriivarUserLogad();
+    _verivarUserLogad();
   }
 
   @override
@@ -164,11 +165,16 @@ class _LoginState extends State<Login> {
                           'Não tem Conta? cadastre-se!',
                           style: TextStyle(color: Colors.white),
                         ),
-                        onTap: () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (ctx) => FormCadastro()),
-                            )
+                        onTap: () {
+                          _validarCampos();
+                          setState(() {
+                            _mensageErro;
+                          });
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(builder: (ctx) => FormCadastro()),
+                          );
+                        }
 
                         //Navigator.pushNamed(context, '/FormCadastro'),
 
