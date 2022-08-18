@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:my_whatsaap/model/usuario.dart';
 import 'package:my_whatsaap/pages/myhome_page.dart';
+import 'package:my_whatsaap/utils/appRoutes.dart';
 
 class FormCadastro extends StatefulWidget {
   const FormCadastro({Key? key}) : super(key: key);
@@ -69,8 +70,8 @@ class _FormCadastroState extends State<FormCadastro> {
       db.collection('usuarios').doc(auth.user!.uid).set(
             usuario.toMap(),
           );
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => MyHome()));
+      Navigator.restorablePushNamedAndRemoveUntil(
+          context, RouteGenerator.ROTA_HOME, (_) => false);
     }).catchError((error) {
       setState(() {
         _mensageErro =
@@ -167,7 +168,9 @@ class _FormCadastroState extends State<FormCadastro> {
                       ),
                       onPressed: () {
                         _validarCampos();
-                        // _cadastarUser;
+
+                        Navigator.restorablePushNamedAndRemoveUntil(
+                            context, RouteGenerator.ROTA_HOME, (_) => false);
                         setState(() {
                           _mensageErro = 'Usuário cadastrado com Sucesso';
                         });

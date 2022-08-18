@@ -3,6 +3,7 @@ import 'dart:ffi';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:my_whatsaap/services/form_cadastro.dart';
+import 'package:my_whatsaap/utils/appRoutes.dart';
 
 import '../model/usuario.dart';
 import '../pages/myhome_page.dart';
@@ -16,8 +17,10 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> {
   FirebaseAuth auth = FirebaseAuth.instance;
+  // ignore: prefer_final_fields
   TextEditingController _controllerEmail =
       TextEditingController(text: 'abc@gmail.com');
+  // ignore: prefer_final_fields
   TextEditingController _controllerSenha =
       TextEditingController(text: '123456');
   String _mensageErro = '';
@@ -56,8 +59,7 @@ class _LoginState extends State<Login> {
     )
         .then((auth) {
       setState(() {
-        Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context) => MyHome()));
+        Navigator.pushReplacementNamed(context, RouteGenerator.ROTA_HOME);
       });
     }).catchError((error) {
       setState(() {
@@ -67,22 +69,17 @@ class _LoginState extends State<Login> {
     });
   }
 
-  Future<void> _verivarUserLogad() async {
+  Future<void> _verificarUserLogad() async {
     User? user = await auth.currentUser;
     if (user != null) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (_) => MyHome(),
-        ),
-      );
+      Navigator.pushReplacementNamed(context, RouteGenerator.ROTA_HOME);
     }
   }
 
   @override
   void initState() {
     super.initState();
-    _verivarUserLogad();
+    _verificarUserLogad();
   }
 
   @override
@@ -109,14 +106,15 @@ class _LoginState extends State<Login> {
                     ),
                   ),
                   Padding(
-                    padding: EdgeInsets.only(bottom: 8),
+                    padding: const EdgeInsets.only(bottom: 8),
                     child: TextField(
                       controller: _controllerEmail,
                       autofocus: true,
                       keyboardType: TextInputType.emailAddress,
-                      style: TextStyle(fontSize: 20),
+                      style: const TextStyle(fontSize: 20),
                       decoration: InputDecoration(
-                          contentPadding: EdgeInsets.fromLTRB(32, 16, 32, 16),
+                          contentPadding:
+                              const EdgeInsets.fromLTRB(32, 16, 32, 16),
                           hintText: 'E-mail',
                           filled: true,
                           fillColor: Colors.white,
@@ -128,9 +126,9 @@ class _LoginState extends State<Login> {
                     keyboardType: TextInputType.visiblePassword,
                     controller: _controllerSenha,
                     obscureText: true,
-                    style: TextStyle(fontSize: 20),
+                    style: const TextStyle(fontSize: 20),
                     decoration: InputDecoration(
-                      contentPadding: EdgeInsets.fromLTRB(32, 16, 32, 16),
+                      contentPadding: const EdgeInsets.fromLTRB(32, 16, 32, 16),
                       hintText: 'Senha',
                       filled: true,
                       fillColor: Colors.white,
@@ -140,40 +138,39 @@ class _LoginState extends State<Login> {
                     ),
                   ),
                   Padding(
-                    padding: EdgeInsets.only(top: 16, bottom: 10),
+                    padding: const EdgeInsets.only(top: 16, bottom: 10),
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(32),
                         ),
                         primary: Colors.green,
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 50, vertical: 20),
-                        textStyle: TextStyle(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 50, vertical: 20),
+                        textStyle: const TextStyle(
                             fontSize: 30, fontWeight: FontWeight.bold),
                       ),
                       onPressed: _validarCampos,
-                      child: Text(
+                      child: const Text(
                         'Entrar',
-                        style: TextStyle(fontSize: 20, color: Colors.white),
+                        style:
+                            const TextStyle(fontSize: 20, color: Colors.white),
                       ),
                     ),
                   ),
                   Center(
                     child: GestureDetector(
-                        child: Text(
+                        child: const Text(
                           'Não tem Conta? cadastre-se!',
-                          style: TextStyle(color: Colors.white),
+                          style: const TextStyle(color: Colors.white),
                         ),
                         onTap: () {
                           _validarCampos();
                           setState(() {
                             _mensageErro;
                           });
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(builder: (ctx) => FormCadastro()),
-                          );
+                          Navigator.pushReplacementNamed(
+                              context, RouteGenerator.ROTA_CADASTRO);
                         }
 
                         //Navigator.pushNamed(context, '/FormCadastro'),
@@ -185,7 +182,7 @@ class _LoginState extends State<Login> {
                     child: Center(
                       child: Text(
                         _mensageErro,
-                        style: TextStyle(
+                        style: const TextStyle(
                             color: Colors.red,
                             fontSize: 20,
                             fontWeight: FontWeight.bold),
