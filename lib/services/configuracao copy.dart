@@ -1,12 +1,11 @@
 // ignore_for_file: unnecessary_null_comparison
 
-import 'dart:async';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 
+import '../model/usuario.dart';
 import '../utils/appRoutes.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
@@ -19,7 +18,7 @@ class Configuracao extends StatefulWidget {
 }
 
 class _ConfiguracaoState extends State<Configuracao> {
-  final db = FirebaseFirestore.instance;
+  final store = FirebaseFirestore.instance;
   FirebaseAuth auth = FirebaseAuth.instance;
   late File _imagem;
   late XFile _imagmSelecionada;
@@ -31,7 +30,7 @@ class _ConfiguracaoState extends State<Configuracao> {
 
   String? _idUserLogado;
   String _mensageErro = '';
-  var dadosRecUser;
+  var _dadosRecUser;
 
   Future _recuperarImageCameraOrGallerr(bool isCamera) async {
     if (isCamera) {
@@ -54,23 +53,27 @@ class _ConfiguracaoState extends State<Configuracao> {
     });
   }
 
+  _recupearDadosUser2() async {
+    FirebaseAuth auth = FirebaseAuth.instance;
+    User? usuarioLogado = await auth.currentUser;
+    String _idUsuarioLogado = usuarioLogado!.uid;
+  }
+
   _recupearDadosUser() async {
     FirebaseAuth.instance.authStateChanges().listen((User? user) async {
       if (user != null) {
         _idUserLogado = '${user.uid}';
-
-        await db
-            .collection('usuarios')
-            .doc(_idUserLogado)
-            .snapshots()
-            .listen((snapshot) {
-          Map<String, dynamic>? dadosRecUser = snapshot.data();
-          _urlImageRecupada = dadosRecUser!['urlImagem'];
-          _controllerNome.text = dadosRecUser['nome'];
-          if (dadosRecUser['urlImagem'] != null) {
-            setState(() {
-              _urlImageRecupada = dadosRecUser['urlImagem'];
-            });
+        store.collection('usuarios').snapshots().listen((snapshot) {
+          for (var item in snapshot.docs) {
+            _dadosRecUser = item.data();
+            _controllerNome.text = _dadosRecUser['nome'];
+            _urlImageRecupada = _dadosRecUser['urlImagem'];
+            if (_dadosRecUser['urlImagem'] != null) {
+              setState(() {
+                _urlImageRecupada = _dadosRecUser['urlImagem'];
+                _controllerNome.text = _dadosRecUser['nome'];
+              });
+            }
           }
         });
       }
@@ -103,13 +106,6 @@ class _ConfiguracaoState extends State<Configuracao> {
   Future _recuperarUrlImagem(TaskSnapshot snapshot) async {
     String url = await snapshot.ref.getDownloadURL();
     _atualizarUrImageFirestone(url);
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text(
-          'Success!\n Imagem atualizada !',
-        ),
-      ),
-    );
 
     setState(() {
       _urlImageRecupada = url;
@@ -118,11 +114,11 @@ class _ConfiguracaoState extends State<Configuracao> {
 
   _atualizarUrImageFirestone(String url) {
     Map<String, dynamic> dadosAtualizar = {"urlImagem": url};
-    db.collection('usuarios').doc(_idUserLogado).update(dadosAtualizar);
+    store.collection('usuarios').doc(_idUserLogado).update(dadosAtualizar);
   }
 
   Future<void> _atualizarDocFirebase() async {
-    db.collection('usuarios').doc(_idUserLogado).update({
+    store.collection('usuarios').doc(_idUserLogado).update({
       'nome': _controllerNome.text,
     });
   }

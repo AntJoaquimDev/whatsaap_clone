@@ -34,11 +34,8 @@ class _MyHomeState extends State<MyHome> with SingleTickerProviderStateMixin {
 
   Future _singOut() async {
     await auth.signOut();
-    //Navigator.of(context).pushReplacementNamed(AppRoutes.LOGIN);
-    // Navigator.push(
-    //   context,
+
     Navigator.pushReplacementNamed(context, '/');
-    // );
   }
 
   @override
@@ -52,11 +49,11 @@ class _MyHomeState extends State<MyHome> with SingleTickerProviderStateMixin {
     );
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-    _tabController.dispose();
-  }
+  // @override
+  // void dispose() {
+  //   super.dispose();
+  //   _tabController.dispose();
+  // }
 
   _onSelected(String itensSelect) {
     print('item escolhido $itensSelect');
@@ -72,7 +69,11 @@ class _MyHomeState extends State<MyHome> with SingleTickerProviderStateMixin {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.green,
-        title: Text("WhatsApp"),
+        title: Text(
+          "WhatsApp",
+          style: TextStyle(
+              fontSize: 25, fontWeight: FontWeight.bold, color: Colors.white),
+        ),
         actions: [
           CircleAvatar(
             child: Image.asset(

@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:my_whatsaap/services/form_cadastro.dart';
@@ -28,14 +26,13 @@ class _LoginState extends State<Login> {
   _validarCampos() {
     String email = _controllerEmail.text;
     String senha = _controllerSenha.text;
-    Usuario usuario = Usuario();
 
     if (email.isNotEmpty && email.contains('@')) {
       if (senha.isNotEmpty) {
         setState(() {
           _mensageErro = '';
         });
-
+        Usuario usuario = Usuario();
         usuario.email = email;
         usuario.senha = senha;
         _logarUser(usuario);
@@ -159,23 +156,26 @@ class _LoginState extends State<Login> {
                     ),
                   ),
                   Center(
-                    child: GestureDetector(
-                        child: const Text(
-                          'Não tem Conta? cadastre-se!',
-                          style: const TextStyle(color: Colors.white),
-                        ),
-                        onTap: () {
-                          _validarCampos();
-                          setState(() {
-                            _mensageErro;
-                          });
-                          Navigator.pushReplacementNamed(
-                              context, RouteGenerator.ROTA_CADASTRO);
-                        }
+                    child: Container(
+                      padding: EdgeInsets.only(top: 15),
+                      child: GestureDetector(
+                          child: const Text(
+                            'Não tem Conta? cadastre-se!',
+                            style: const TextStyle(color: Colors.white),
+                          ),
+                          onTap: () {
+                            _validarCampos();
+                            setState(() {
+                              _mensageErro;
+                            });
+                            Navigator.pushReplacementNamed(
+                                context, RouteGenerator.ROTA_CADASTRO);
+                          }
 
-                        //Navigator.pushNamed(context, '/FormCadastro'),
+                          //Navigator.pushNamed(context, '/FormCadastro'),
 
-                        ),
+                          ),
+                    ),
                   ),
                   Padding(
                     padding: const EdgeInsets.only(top: 16, bottom: 10),

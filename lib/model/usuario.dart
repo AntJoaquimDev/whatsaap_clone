@@ -1,10 +1,16 @@
+// ignore_for_file: unnecessary_getters_setters
+
 import 'dart:io';
 
 class Usuario {
   late String _nome;
   late String _email;
   late String _senha;
-  File? _storedImage;
+  late String _urlImage;
+
+  String get urlImage => this._urlImage;
+
+  set urlImage(String urlImage) => this._urlImage = urlImage;
 
   Usuario();
 
@@ -22,20 +28,16 @@ class Usuario {
 
   String get nome => _nome;
 
-  set nome(String value) {
-    _nome = value;
-  }
-
-  File get storedImage => _storedImage!;
-  set storedImage(File image) {
-    _storedImage = image;
+  set nome(String nome) {
+    _nome = nome;
   }
 
   Map<String, dynamic> toMap() {
     Map<String, dynamic> map = {
-      'nome': this.nome,
-      'email': this.email,
-      'storedImage': this.storedImage,
+      'nome': this._nome,
+      'email': this._email,
+      'senha': this._senha,
+      'urlImage': this._urlImage,
     };
     return map;
   }

@@ -18,26 +18,29 @@ class _FormCadastroState extends State<FormCadastro> {
   FirebaseAuth auth = FirebaseAuth.instance;
 
   TextEditingController _controllerNome = TextEditingController();
-  TextEditingController _controllerEmail = TextEditingController();
-  TextEditingController _controllerSenha = TextEditingController();
+  TextEditingController _controllerEmail =
+      TextEditingController(text: '@gmail.com');
+  TextEditingController _controllerSenha =
+      TextEditingController(text: '123456');
   String _mensageErro = '';
+  Usuario usuario = Usuario();
 
   _validarCampos() {
-    String nome = _controllerNome.text;
-    String email = _controllerEmail.text;
-    String senha = _controllerSenha.text;
-    Usuario usuario = Usuario();
+    String _nome = _controllerNome.text;
+    String _email = _controllerEmail.text;
+    String _senha = _controllerSenha.text;
 
-    if (nome.isNotEmpty && nome.length >= 3) {
-      if (email.isNotEmpty && email.contains('@')) {
-        if (senha.isNotEmpty && senha.length >= 6) {
+    if (_nome.isNotEmpty && _nome.length >= 3) {
+      if (_email.isNotEmpty && _email.contains('@')) {
+        if (_senha.isNotEmpty && _senha.length >= 6) {
           setState(() {
             _mensageErro = '';
           });
 
-          usuario.nome = nome;
-          usuario.email = email;
-          usuario.senha = senha;
+          usuario.nome = _nome;
+          usuario.email = _email;
+          usuario.senha = _senha;
+
           _cadastrarUser(usuario);
         } else {
           setState(() {
@@ -58,26 +61,37 @@ class _FormCadastroState extends State<FormCadastro> {
     }
   }
 
-  Future<void> _cadastrarUser(Usuario usuario) async {
+  _cadastrarUser(Usuario usuario) {
+    FirebaseAuth auth = FirebaseAuth.instance;
     auth
         .createUserWithEmailAndPassword(
       email: usuario.email,
       password: usuario.senha,
     )
         .then((auth) {
-      final db = FirebaseFirestore.instance;
+      String idUser = auth.user!.uid;
 
-      db.collection('usuarios').doc(auth.user!.uid).set(
-            usuario.toMap(),
-          );
+      print(idUser);
+      // db.collection('usuarios').doc(idUser).set(usuario.toMap());
+      // print(usuario.toMap().toString());
+      // print(usuario.nome);
+      _cadastrarUserFirebase(idUser);
       Navigator.restorablePushNamedAndRemoveUntil(
           context, RouteGenerator.ROTA_HOME, (_) => false);
     }).catchError((error) {
-      setState(() {
-        _mensageErro =
-            'Erro ao cadastrar usuário,verifique os campos e tente novament';
-      });
+      _mensageErro =
+          'Erro ao cadastrar usuário,verifique os campos e tente novament';
     });
+  }
+
+  _cadastrarUserFirebase(String idUser) async {
+    FirebaseFirestore db = FirebaseFirestore.instance;
+
+    Map<String, dynamic> dadosAtualizar = {
+      'nome': _controllerNome.text,
+      'email': _controllerEmail.text,
+    };
+    db.collection('usuarios').doc(idUser).set(dadosAtualizar);
   }
 
   @override
