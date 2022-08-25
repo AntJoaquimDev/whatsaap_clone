@@ -2,6 +2,7 @@
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:my_whatsaap/pages/mensagens.dart';
 import 'package:my_whatsaap/services/form_cadastro.dart';
 import 'package:my_whatsaap/utils/appRoutes.dart';
 
@@ -31,6 +32,9 @@ class MyApp extends StatelessWidget {
       //home: Login(),
       debugShowCheckedModeBanner: false,
       initialRoute: '/',
+      routes: {
+        RouteGenerator.ROTA_MENSAGEM: (context) => Mensagens(),
+      },
       onGenerateRoute: RouteGenerator.generateRoute,
     );
   }

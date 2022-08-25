@@ -90,7 +90,7 @@ class _LoginState extends State<Login> {
           child: SingleChildScrollView(
             child: Container(
               //width: 390,
-              width: deviceSize.width * 0.35,
+              width: deviceSize.width * 0.75,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
@@ -143,7 +143,7 @@ class _LoginState extends State<Login> {
                         ),
                         primary: Colors.green,
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 50, vertical: 20),
+                            horizontal: 35, vertical: 15),
                         textStyle: const TextStyle(
                             fontSize: 30, fontWeight: FontWeight.bold),
                       ),

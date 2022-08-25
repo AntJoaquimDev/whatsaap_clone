@@ -1,8 +1,9 @@
 import 'dart:ui';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-
 import 'package:my_whatsaap/services/login.dart';
 import 'package:my_whatsaap/utils/appRoutes.dart';
 
@@ -19,14 +20,32 @@ class MyHome extends StatefulWidget {
 class _MyHomeState extends State<MyHome> with SingleTickerProviderStateMixin {
   FirebaseAuth auth = FirebaseAuth.instance;
   late TabController _tabController;
-  String? _emailLogado;
+  String? _nomeLogado;
+  String? _idUserLogado;
+  String? _url;
+
   List<String> itensSelect = ['ItensConfiguracao'];
 
-  Future<void> _getlogado() async {
-    await FirebaseAuth.instance.authStateChanges().listen((User? user) {
+  final db = FirebaseFirestore.instance;
+  _recupearDadosUser() async {
+    FirebaseAuth.instance.authStateChanges().listen((User? user) async {
       if (user != null) {
-        setState(() {
-          _emailLogado = '${user.email}';
+        _idUserLogado = '${user.uid}';
+
+        await db
+            .collection('usuarios')
+            .doc(_idUserLogado)
+            .snapshots()
+            .listen((snapshot) {
+          Map<String, dynamic>? dadosRecUser = snapshot.data();
+          _url = dadosRecUser!['urlImagem'];
+
+          if (dadosRecUser['urlImagem'] != null) {
+            setState(() {
+              _url = dadosRecUser['urlImagem'];
+              _nomeLogado = dadosRecUser['nome'];
+            });
+          }
         });
       }
     });
@@ -34,26 +53,20 @@ class _MyHomeState extends State<MyHome> with SingleTickerProviderStateMixin {
 
   Future _singOut() async {
     await auth.signOut();
-
     Navigator.pushReplacementNamed(context, '/');
   }
 
   @override
   void initState() {
     super.initState();
-    _getlogado();
+    _recupearDadosUser();
+
     _tabController = TabController(
       length: 2,
       vsync: this,
       initialIndex: 0,
     );
   }
-
-  // @override
-  // void dispose() {
-  //   super.dispose();
-  //   _tabController.dispose();
-  // }
 
   _onSelected(String itensSelect) {
     print('item escolhido $itensSelect');
@@ -72,20 +85,13 @@ class _MyHomeState extends State<MyHome> with SingleTickerProviderStateMixin {
         title: Text(
           "WhatsApp",
           style: TextStyle(
-              fontSize: 25, fontWeight: FontWeight.bold, color: Colors.white),
+              fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
         ),
         actions: [
           CircleAvatar(
-            child: Image.asset(
-              'assets/images/usuario.png',
-              fit: BoxFit.cover,
-            ),
+            backgroundImage: NetworkImage(_url!),
           ),
-          TextButton(onPressed: _getlogado, child: Text('$_emailLogado')),
-          // IconButton(
-          //   onPressed: _singOut,
-          //   icon: Icon(Icons.exit_to_app_outlined),
-          // ),
+          TextButton(onPressed: () {}, child: Text('$_nomeLogado')),
           PopupMenuButton(
               //onSelected: _onSelected,
               itemBuilder: (context) {
@@ -139,16 +145,3 @@ class _MyHomeState extends State<MyHome> with SingleTickerProviderStateMixin {
     );
   }
 }
-/** actions: [
-        CircleAvatar(
-          child: Image.asset(
-            'assets/images/usuario.png',
-            fit: BoxFit.cover,
-          ),
-        ),
-        TextButton(onPressed: _getlogado, child: Text('$_emailLogado')),
-        IconButton(
-          onPressed: _singOut,
-          icon: Icon(Icons.exit_to_app_outlined),
-        ),
-      ], */

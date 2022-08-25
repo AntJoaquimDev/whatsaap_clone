@@ -108,7 +108,7 @@ class _FormCadastroState extends State<FormCadastro> {
         child: Center(
           child: SingleChildScrollView(
             child: Container(
-              width: deviceSize.width * 0.35,
+              width: deviceSize.width * 0.75,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [

@@ -1,7 +1,10 @@
+// ignore_for_file: unused_field
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:my_whatsaap/model/usuario.dart';
+import 'package:my_whatsaap/utils/appRoutes.dart';
 
 // ignore: unused_import
 import '../model/conversas.dart';
@@ -13,6 +16,9 @@ class AbaContatos extends StatefulWidget {
 
 class _AbaContatosState extends State<AbaContatos> {
   // ignore: prefer_final_fields
+
+  //final args = ModalRoute.of(context)!.settings.arguments as ScreenArguments;
+
   final db = FirebaseFirestore.instance;
   FirebaseAuth auth = FirebaseAuth.instance;
 
@@ -27,7 +33,7 @@ class _AbaContatosState extends State<AbaContatos> {
     List<Usuario> listaUsuarios = [];
     for (DocumentSnapshot item in querySnapshot.docs) {
       dados = item.data();
-      // if( dados[] == _emailUsuarioLogado ) continue;
+      if (dados['email'] == _emailUsuarioLogado) continue;
 
       Usuario usuario = Usuario();
       usuario.email = dados["email"];
@@ -66,7 +72,7 @@ class _AbaContatosState extends State<AbaContatos> {
             return Center(
               child: Column(
                 children: [
-                  Text('Carregando'),
+                  Text('Carregando...'),
                   CircularProgressIndicator(),
                 ],
               ),
@@ -81,6 +87,13 @@ class _AbaContatosState extends State<AbaContatos> {
                   Usuario usuario = listaItens[index];
 
                   return ListTile(
+                    onTap: () {
+                      Navigator.pushNamed(
+                        context,
+                        RouteGenerator.ROTA_MENSAGEM,
+                        arguments: usuario,
+                      );
+                    },
                     contentPadding: EdgeInsets.fromLTRB(16, 8, 16, 8),
                     leading: CircleAvatar(
                         maxRadius: 25,
